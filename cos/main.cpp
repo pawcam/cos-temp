@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
                             pOelAdapter);
     pService->start();
     pService->join();
-    delete service;
+    delete pService;
     pService = nullptr;
     exit(0);
 }
