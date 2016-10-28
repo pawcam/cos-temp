@@ -18,8 +18,8 @@ typedef service_t::OELAdapterType OELAdapterType;
 
 service_t *pService;
 
-void exit_cleanly(int sig) {
-    cout << "Received signal " << sig << "; interrupting process" << endl;
+void exit_cleanly(int nSig) {
+    cout << "Received signal " << nSig << "; interrupting process" << endl;
     pService->stop();
 }
 
