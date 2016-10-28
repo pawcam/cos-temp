@@ -16,11 +16,11 @@ using namespace TW;
 typedef MessageRelayService<CancelOrderService> service_t;
 typedef service_t::OELAdapterType OELAdapterType;
 
-service_t *service;
+service_t *pService;
 
 void exit_cleanly(int sig) {
     cout << "Received signal " << sig << "; interrupting process" << endl;
-    service->stop();
+    pService->stop();
 }
 
 int main(int argc, char *argv[]) {
@@ -38,7 +38,7 @@ int main(int argc, char *argv[]) {
 
     string strInstanceId = getenv("SERVICE_INSTANCE_ID");
     string strMqHost = getenv("MQ_HOST");
-    uint16_t strMqPort = lexical_cast<uint16_t>(getenv("MQ_PORT"));
+    uint16_t unMQPort = lexical_cast<uint16_t>(getenv("MQ_PORT"));
     string strMqUsername = getenv("MQ_USERNAME");
     string strMqPassword = getenv("MQ_PASSWORD");
     string strMqVHost = getenv("MQ_VHOST");
@@ -47,11 +47,11 @@ int main(int argc, char *argv[]) {
     string strMqQueueName = getenv("MQ_QUEUE_NAME");
 
     OELAdapterType *pOelAdapter = new OELAdapterType(INPUT, strORDefaultRoute);
-    service = new service_t(strInstanceId, strMqHost, strMqPort, strMqUsername, strMqPassword, strMqVHost, strMqQueueName, strMqExchangeName,
+    pService = new service_t(strInstanceId, strMqHost, unMQPort, strMqUsername, strMqPassword, strMqVHost, strMqQueueName, strMqExchangeName,
                             pOelAdapter);
-    service->start();
-    service->join();
+    pService->start();
+    pService->join();
     delete service;
-    service = nullptr;
+    pService = nullptr;
     exit(0);
 }
