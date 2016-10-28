@@ -36,18 +36,18 @@ int main(int argc, char *argv[]) {
     sx_log::Instance().setBit(sx_log::SX_LOG_DEBUG, true);
 #endif
 
-    string instanceId = getenv("SERVICE_INSTANCE_ID");
-    string mqHost = getenv("MQ_HOST");
-    uint16_t mqPort = lexical_cast<uint16_t>(getenv("MQ_PORT"));
-    string mqUsername = getenv("MQ_USERNAME");
-    string mqPassword = getenv("MQ_PASSWORD");
-    string mqVHost = getenv("MQ_VHOST");
-    string mqExchangeName = getenv("MQ_EXCHANGE_NAME");
+    string strInstanceId = getenv("SERVICE_INSTANCE_ID");
+    string strMqHost = getenv("MQ_HOST");
+    uint16_t strMqPort = lexical_cast<uint16_t>(getenv("MQ_PORT"));
+    string strMqUsername = getenv("MQ_USERNAME");
+    string strMqPassword = getenv("MQ_PASSWORD");
+    string strMqVHost = getenv("MQ_VHOST");
+    string strMqExchangeName = getenv("MQ_EXCHANGE_NAME");
     string strORDefaultRoute = getenv("OR_DEFAULT_ROUTE");
-    string mqQueueName = getenv("MQ_QUEUE_NAME");
+    string strMqQueueName = getenv("MQ_QUEUE_NAME");
 
     OELAdapterType *pOelAdapter = new OELAdapterType(INPUT, strORDefaultRoute);
-    service = new service_t(instanceId, mqHost, mqPort, mqUsername, mqPassword, mqVHost, mqQueueName, mqExchangeName,
+    service = new service_t(strInstanceId, strMqHost, strMqPort, strMqUsername, strMqPassword, strMqVHost, strMqQueueName, strMqExchangeName,
                             pOelAdapter);
     service->start();
     service->join();
