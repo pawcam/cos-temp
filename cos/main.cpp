@@ -49,8 +49,7 @@ int main(int argc, char *argv[]) {
     OELAdapterType *pOelAdapter = new OELAdapterType(INPUT, strORDefaultRoute);
     pService = new service_t(strInstanceId, strMqHost, unMQPort, strMqUsername, strMqPassword, strMqVHost, strMqQueueName, strMqExchangeName,
                             pOelAdapter);
-    pService->start();
-    pService->join();
+    pService->run();
     delete pService;
     pService = nullptr;
     exit(0);
