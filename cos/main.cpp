@@ -6,26 +6,16 @@
 #include <json/json.hpp>
 #include <kr/sx_pl.h>
 #include <kr/CmdLine.h>
-#include <twMagic/service/MessageRelayService.h>
-#include <twMagic/cancelorders/CancelOrderService.h>
+#include <twLib/mq/MQAdapter.h>
+#include <twLib/or/OR2Adapter.h>
+
+#include "CancelOrderMessageHandler.h"
 
 using namespace std;
 using namespace boost;
 using namespace TW;
 
-typedef MessageRelayService<CancelOrderService> service_t;
-typedef service_t::OELAdapterType OELAdapterType;
-
-service_t *pService;
-
-void exit_cleanly(int nSig) {
-    cout << "Received signal " << nSig << "; interrupting process" << endl;
-    pService->stop();
-}
-
 int main(int argc, char *argv[]) {
-    signal(SIGINT, exit_cleanly);
-
     sx_setArgCArgV(argc, argv);
 
     CCmdLine cmdLine;
@@ -46,11 +36,20 @@ int main(int argc, char *argv[]) {
     string strORDefaultRoute = getenv("OR_DEFAULT_ROUTE");
     string strMqQueueName = getenv("MQ_QUEUE_NAME");
 
-    OELAdapterType *pOelAdapter = new OELAdapterType(INPUT, strORDefaultRoute);
-    pService = new service_t(strInstanceId, strMqHost, unMQPort, strMqUsername, strMqPassword, strMqVHost, strMqQueueName, strMqExchangeName,
-                            pOelAdapter);
-    pService->run();
-    delete pService;
-    pService = nullptr;
-    exit(0);
+    TW::MQAdapter mqAdapter(strMqHost, unMQPort, strMqUsername,
+                            strMqPassword, strMqVHost, strMqQueueName,
+                            strMqExchangeName);
+
+    TW::OR2Adapter or2Adapter(TW::OR2ClientMode::INPUT, strORDefaultRoute);
+
+    CancelOrderMessageHandler messageHandler = CancelOrderMessageHandler(&or2Adapter);
+
+    mqAdapter.setMessageHandler(&messageHandler);
+
+    mqAdapter.start();
+    or2Adapter.start();
+
+    mqAdapter.join();
+    or2Adapter.join();
+    return 0;
 }
