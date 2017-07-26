@@ -36,16 +36,15 @@ int main(int argc, char *argv[]) {
     string strORDefaultRoute = getenv("OR_DEFAULT_ROUTE");
     string strMqQueueName = getenv("MQ_QUEUE_NAME");
 
-    
     sx_ThreadSafeLockUnlock lock;
     TW::OR2Adapter or2Adapter(TW::OR2ClientMode::INPUT, strORDefaultRoute, "OR2Adapter", 100, false, &lock);
-    
+
     TW::MQAdapter mqAdapter(strMqHost, unMQPort, strMqUsername,
                             strMqPassword, strMqVHost, strMqQueueName,
                             strMqExchangeName);
     CancelOrderMessageHandler messageHandler = CancelOrderMessageHandler(&or2Adapter);
     mqAdapter.setMessageHandler(&messageHandler);
-    
+
     or2Adapter.start();
     lock.Lock(__FILE__, __LINE__);
     lock.Unlock();
