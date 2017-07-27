@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
 
     TW::MQAdapter mqAdapter(strMqHost, unMQPort, strMqUsername,
                             strMqPassword, strMqVHost, strMqQueueName,
-                            strMqExchangeName);
+                            strMqExchangeName, "MQAdapter");
     CancelOrderMessageHandler messageHandler = CancelOrderMessageHandler(&or2Adapter);
     mqAdapter.setMessageHandler(&messageHandler);
 
