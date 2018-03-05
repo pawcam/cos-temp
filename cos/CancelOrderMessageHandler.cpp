@@ -22,13 +22,14 @@ bool CancelOrderMessageHandler::handleMessage(nlohmann::json& jMessage, std::str
   {
     return false;
   }
-  if (!jMessage["cancel-user-id"].is_number_integer())
+
+  uint32_t uCancelUserIdentifier = 0;
+  if (jMessage["cancel-user-id"].is_number_integer())
   {
-    return false;
+	  uCancelUserIdentifier = jMessage["cancel-user-id"];
   }
 
   const uint32_t nGlobalOrderNum = jMessage["ext-global-order-number"];
-  const uint32_t uCancelUserIdentifier = jMessage["cancel-user-id"];
   const string   strDestination  = MQUtil::extractDestination(jMessage, m_pOR2Adapter->getDefaultRoute());
   return m_pOR2Adapter->sendCancel(numeric_limits<uint32_t>::max(), nGlobalOrderNum, strDestination.c_str(), uCancelUserIdentifier);
 }
