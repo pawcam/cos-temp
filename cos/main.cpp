@@ -4,10 +4,11 @@
 
 #include <boost/lexical_cast.hpp>
 #include <json/json.hpp>
-#include <kr/sx_pl.h>
 #include <kr/CmdLine.h>
+#include <kr/sx_pl.h>
 #include <twLib/mq/MQAdapter.h>
 #include <twLib/or/OR2Adapter.h>
+#include <twLib/SenderLocationReader.h>
 
 #include "CancelOrderMessageHandler.h"
 
@@ -36,13 +37,16 @@ int main(int argc, char *argv[]) {
     string strORDefaultRoute = getenv("OR_DEFAULT_ROUTE");
     string strMqQueueName = getenv("MQ_QUEUE_NAME");
 
+    TW::SenderLocationReader locationReader;
+    locationReader.readFile();
+
     sx_ThreadSafeLockUnlock lock;
     TW::OR2Adapter or2Adapter(TW::OR2ClientMode::INPUT, strORDefaultRoute, "OR2Adapter", 100, false, &lock);
 
     TW::MQAdapter mqAdapter(strMqHost, unMQPort, strMqUsername,
                             strMqPassword, strMqVHost, strMqQueueName,
                             strMqExchangeName, "MQAdapter");
-    CancelOrderMessageHandler messageHandler = CancelOrderMessageHandler(&or2Adapter);
+    CancelOrderMessageHandler messageHandler = CancelOrderMessageHandler(&or2Adapter, &locationReader);
     mqAdapter.setMessageHandler(&messageHandler);
 
     or2Adapter.start();

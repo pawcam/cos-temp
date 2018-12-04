@@ -1,9 +1,11 @@
 #include "CancelOrderMessageHandler.h"
+
 #include <twLib/or/OR2Adapter.h>
+#include <twLib/SenderLocationReader.h>
 
 using namespace ::TW;
-CancelOrderMessageHandler::CancelOrderMessageHandler(OR2Adapter *pOR2Adapter)
-  : m_pOR2Adapter(pOR2Adapter)
+CancelOrderMessageHandler::CancelOrderMessageHandler(OR2Adapter *pOR2Adapter, TW::SenderLocationReader* pSenderLocationReader)
+  : m_pOR2Adapter(pOR2Adapter), m_pSenderLocationReader(pSenderLocationReader)
 {
 }
 
@@ -31,5 +33,11 @@ bool CancelOrderMessageHandler::handleMessage(nlohmann::json& jMessage, std::str
 
   const uint32_t nGlobalOrderNum = jMessage["ext-global-order-number"];
   const string   strDestination  = MQUtil::extractDestination(jMessage, m_pOR2Adapter->getDefaultRoute());
-  return m_pOR2Adapter->sendCancel(numeric_limits<uint32_t>::max(), nGlobalOrderNum, strDestination.c_str(), uCancelUserIdentifier);
+
+  if(m_pSenderLocationReader) {
+
+    return m_pOR2Adapter->sendCancel(numeric_limits<uint32_t>::max(), nGlobalOrderNum, strDestination.c_str(),
+                                     uCancelUserIdentifier, m_pSenderLocationReader->getSenderLocation(uCancelUserIdentifier));
+  }
+  return m_pOR2Adapter->sendCancel(numeric_limits<uint32_t>::max(), nGlobalOrderNum, strDestination.c_str(), uCancelUserIdentifier, "US");
 }
