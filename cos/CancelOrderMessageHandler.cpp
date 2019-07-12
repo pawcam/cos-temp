@@ -1,5 +1,6 @@
 #include "CancelOrderMessageHandler.h"
 
+#include <twLib/JsonOrderInterpreter.h>
 #include <twLib/or/OR2Adapter.h>
 #include <twLib/SenderLocationReader.h>
 
@@ -31,13 +32,19 @@ bool CancelOrderMessageHandler::handleMessage(nlohmann::json& jMessage, std::str
 	  uCancelUserIdentifier = jMessage["cancel-user-id"];
   }
 
+  int32_t nCmtaId = JsonOrderInterpreter::DEFAULT_CMTA_ID;
+  if (jMessage["cmta-id"].is_number_integer())
+  {
+    nCmtaId = jMessage["cmta-id"];
+  }
+
   const uint32_t nGlobalOrderNum = jMessage["ext-global-order-number"];
   const string   strDestination  = MQUtil::extractDestination(jMessage, m_pOR2Adapter->getDefaultRoute());
 
   if(m_pSenderLocationReader) {
 
     return m_pOR2Adapter->sendCancel(numeric_limits<uint32_t>::max(), nGlobalOrderNum, strDestination.c_str(),
-                                     uCancelUserIdentifier, m_pSenderLocationReader->getSenderLocation(uCancelUserIdentifier));
+                                     uCancelUserIdentifier, m_pSenderLocationReader->getSenderLocation(uCancelUserIdentifier), nCmtaId);
   }
-  return m_pOR2Adapter->sendCancel(numeric_limits<uint32_t>::max(), nGlobalOrderNum, strDestination.c_str(), uCancelUserIdentifier, "US");
+  return m_pOR2Adapter->sendCancel(numeric_limits<uint32_t>::max(), nGlobalOrderNum, strDestination.c_str(), uCancelUserIdentifier, "US", nCmtaId);
 }
