@@ -21,6 +21,7 @@ int main(int argc, char *argv[]) {
 
     CCmdLine cmdLine;
     cmdLine.SplitLine(argc, argv);
+    bool bDirectExchange = cmdLine.HasSwitch("--direct_exchange");
 
 #ifdef _DEBUG
     cout << "Enabling debug logging" << endl;
@@ -33,6 +34,7 @@ int main(int argc, char *argv[]) {
     string strMqUsername = getenv("MQ_USERNAME");
     string strMqPassword = getenv("MQ_PASSWORD");
     string strMqVHost = getenv("MQ_VHOST");
+    string strMqDirectExchangeName = getenv("MQ_DIRECT_EXCHANGE_NAME");
     string strMqExchangeName = getenv("MQ_EXCHANGE_NAME");
     string strORDefaultRoute = getenv("OR_DEFAULT_ROUTE");
     string strMqQueueName = getenv("MQ_QUEUE_NAME");
@@ -43,10 +45,11 @@ int main(int argc, char *argv[]) {
     sx_ThreadSafeLockUnlock lock;
     TW::OR2Adapter or2Adapter(TW::OR2ClientMode::INPUT, strORDefaultRoute, "OR2Adapter", 100, false, &lock);
 
+    string strBindingKey = bDirectExchange ? strMqQueueName : "";
     TW::MQAdapter mqAdapter(strMqHost, unMQPort, strMqUsername,
                             strMqPassword, strMqVHost, strMqQueueName,
-                            strMqExchangeName, "MQAdapter");
-    CancelOrderMessageHandler messageHandler = CancelOrderMessageHandler(&or2Adapter, &locationReader);
+                            strMqExchangeName, "MQAdapter", strBindingKey, bDirectExchange, strMqDirectExchangeName);
+    CancelOrderMessageHandler messageHandler = CancelOrderMessageHandler(&or2Adapter, &locationReader, bDirectExchange);
     mqAdapter.setMessageHandler(&messageHandler);
 
     or2Adapter.start();

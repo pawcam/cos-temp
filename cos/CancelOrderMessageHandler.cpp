@@ -5,8 +5,8 @@
 #include <twLib/SenderLocationReader.h>
 
 using namespace ::TW;
-CancelOrderMessageHandler::CancelOrderMessageHandler(OR2Adapter *pOR2Adapter, TW::SenderLocationReader* pSenderLocationReader)
-  : m_pOR2Adapter(pOR2Adapter), m_pSenderLocationReader(pSenderLocationReader)
+CancelOrderMessageHandler::CancelOrderMessageHandler(OR2Adapter *pOR2Adapter, TW::SenderLocationReader* pSenderLocationReader, bool bDefaultRoute)
+  : m_pOR2Adapter(pOR2Adapter), m_pSenderLocationReader(pSenderLocationReader), m_bDefaultRoute(bDefaultRoute)
 {
 }
 
@@ -39,7 +39,7 @@ bool CancelOrderMessageHandler::handleMessage(nlohmann::json& jMessage, std::str
   }
 
   const uint32_t nGlobalOrderNum = jMessage["ext-global-order-number"];
-  const string   strDestination  = MQUtil::extractDestination(jMessage, m_pOR2Adapter->getDefaultRoute());
+  const string   strDestination  = m_bDefaultRoute ? m_pOR2Adapter->getDefaultRoute() : MQUtil::extractDestination(jMessage, m_pOR2Adapter->getDefaultRoute());
 
   if(m_pSenderLocationReader) {
 
