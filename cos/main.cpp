@@ -28,7 +28,6 @@ int main(int argc, char *argv[]) {
     sx_log::Instance().setBit(sx_log::SX_LOG_DEBUG, true);
 #endif
 
-    string strInstanceId = getenv("SERVICE_INSTANCE_ID");
     string strMqHost = getenv("MQ_HOST");
     uint16_t unMQPort = lexical_cast<uint16_t>(getenv("MQ_PORT"));
     string strMqUsername = getenv("MQ_USERNAME");
