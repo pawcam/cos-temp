@@ -6,6 +6,7 @@
 #include <json/json.hpp>
 #include <kr/CmdLine.h>
 #include <kr/sx_pl.h>
+#include <twLib/util.h>
 #include <twLib/mq/MQAdapter.h>
 #include <twLib/or/OR2Adapter.h>
 #include <twLib/SenderLocationReader.h>
@@ -28,6 +29,7 @@ int main(int argc, char *argv[]) {
     sx_log::Instance().setBit(sx_log::SX_LOG_DEBUG, true);
 #endif
 
+    // Required Environment Variables
     string strMqHost = getenv("MQ_HOST");
     uint16_t unMQPort = lexical_cast<uint16_t>(getenv("MQ_PORT"));
     string strMqUsername = getenv("MQ_USERNAME");
@@ -37,6 +39,12 @@ int main(int argc, char *argv[]) {
     string strMqExchangeName = getenv("MQ_EXCHANGE_NAME");
     string strORDefaultRoute = getenv("OR_DEFAULT_ROUTE");
     string strMqQueueName = getenv("MQ_QUEUE_NAME");
+    // Optional Environment Variables
+    bool bMqSslEnabled = (TW::getEnv("MQ_SSL_ENABLED", "false") == "true" ? true : false);
+    const string strMqSslCaCertPath = TW::getEnv("MQ_SSL_CA_CERT_PATH", "");
+    const string strMqSslClientCertPath = TW::getEnv("MQ_SSL_CLIENT_CERT_PATH", "");
+    const string strMqSslClientKeyPath = TW::getEnv("MQ_SSL_CLIENT_KEY_PATH", "");
+    bool bMqSslVerifyHostname = (TW::getEnv("MQ_SSL_VERIFY_HOSTNAME", "false") == "true" ? true : false);
 
     TW::SenderLocationReader locationReader;
     locationReader.readFile();
@@ -47,7 +55,9 @@ int main(int argc, char *argv[]) {
     string strBindingKey = bDirectExchange ? strMqQueueName : "";
     TW::MQAdapter mqAdapter(strMqHost, unMQPort, strMqUsername,
                             strMqPassword, strMqVHost, strMqQueueName,
-                            strMqExchangeName, "MQAdapter", strBindingKey, bDirectExchange, strMqDirectExchangeName);
+                            strMqExchangeName, "MQAdapter", strBindingKey, bDirectExchange, strMqDirectExchangeName,
+                            bMqSslEnabled, strMqSslCaCertPath, strMqSslClientKeyPath, strMqSslClientCertPath, bMqSslVerifyHostname);
+
     CancelOrderMessageHandler messageHandler = CancelOrderMessageHandler(&or2Adapter, &locationReader, bDirectExchange);
     mqAdapter.setMessageHandler(&messageHandler);
 
