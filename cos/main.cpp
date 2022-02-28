@@ -10,7 +10,8 @@
 #include <twLib/mq/MQAdapter.h>
 #include <twLib/or/OR2Adapter.h>
 #include <twLib/SenderLocationReader.h>
-
+#include <twLib/models/Future.h>
+#include <twLib/models/FutureOption.h>
 #include "CancelOrderMessageHandler.h"
 
 using namespace std;
@@ -45,6 +46,19 @@ int main(int argc, char *argv[]) {
     const string strMqSslClientCertPath = TW::getEnv("MQ_SSL_CLIENT_CERT_PATH", "");
     const string strMqSslClientKeyPath = TW::getEnv("MQ_SSL_CLIENT_KEY_PATH", "");
     bool bMqSslVerifyHostname = (TW::getEnv("MQ_SSL_VERIFY_HOSTNAME", "false") == "true" ? true : false);
+
+    std::vector <std::string> vFutureSymbolMappings = {
+        "cme_db_future.out",
+        "smalls_db_future.out",
+        "cfe_db_future.out"
+    };
+    TW::Future::loadMultipleFutureSymbolMappings(vFutureSymbolMappings);
+
+    std::vector <std::string> vFutureOptionSymbolMappings = {
+        "cme_db_option.out",
+        "smalls_db_option.out"
+    };
+    TW::FutureOption::loadMultipleFutureOptionSymbolMappings(vFutureOptionSymbolMappings);
 
     TW::SenderLocationReader locationReader;
     locationReader.readFile();

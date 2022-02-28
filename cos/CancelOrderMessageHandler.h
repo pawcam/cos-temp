@@ -2,6 +2,7 @@
 #define CANCELORDERMESSAGEHANDLER_H
 
 #include <twLib/mq/MessageHandler.h>
+#include <kr/MismatchedRootsMap.h>
 
 namespace TW {
 class SenderLocationReader;
@@ -18,6 +19,10 @@ private:
   TW::OR2Adapter *m_pOR2Adapter;
   TW::SenderLocationReader *m_pSenderLocationReader;
   bool m_bDefaultRoute;
+  MismatchedRootsMap m_rootMap;
+  bool isGTCCancel(const nlohmann::json& jMessage);
+  bool handleDayOrderMessage(nlohmann::json& jMessage);
+  bool handleGTCOrderMessage(nlohmann::json& jMessage);
 };
 
 #endif //CANCELORDERMESSAGEHANDLER_H
