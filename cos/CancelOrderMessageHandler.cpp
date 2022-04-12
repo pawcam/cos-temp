@@ -99,7 +99,8 @@ bool CancelOrderMessageHandler::isGTCCancel(const nlohmann::json& jMessage)
   {
     tif = jMessage.at("time-in-force");
   }
-  std::string tifGTC = ORStrings::toString(sxORMsgWithType::GTC);
-  if (tif == tifGTC) return true;
+  const std::string tifGTC = ORStrings::toString(sxORMsgWithType::GTC);
+  const std::string tifGTD = ORStrings::toString(sxORMsgWithType::GTD);
+  if (tif == tifGTC || tif == tifGTD) return true;
   return false;
 }
