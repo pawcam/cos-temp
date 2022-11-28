@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
     locationReader.readFile();
 
     sx_ThreadSafeLockUnlock lock;
-    TW::OR2Adapter or2Adapter(TW::OR2ClientMode::INPUT, strORDefaultRoute, "OR2Adapter", 100, false, &lock);
+    TW::OR2Adapter or2Adapter(TW::OR2ClientMode::INPUT, strORDefaultRoute, "COS", 100, false, &lock);
 
     string strBindingKey = bDirectExchange ? strMqQueueName : "";
     TW::MQAdapter mqAdapter(strMqHost, unMQPort, strMqUsername,
