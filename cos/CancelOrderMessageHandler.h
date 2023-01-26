@@ -9,7 +9,7 @@ class SenderLocationReader;
 class OR2Adapter;
 }
 
-class CancelOrderMessageHandler : public TW::MessageHandler {
+class CancelOrderMessageHandler final : public TW::MessageHandler {
 public:
   CancelOrderMessageHandler(TW::OR2Adapter *pOR2Adapter, TW::SenderLocationReader *pSenderLocationReader, bool bDefaultRoute = false);
 
@@ -20,9 +20,7 @@ private:
   TW::SenderLocationReader *m_pSenderLocationReader;
   bool m_bDefaultRoute;
   MismatchedRootsMap m_rootMap;
-  bool isGTCCancel(const nlohmann::json& jMessage);
-  bool handleDayOrderMessage(nlohmann::json& jMessage);
-  bool handleGTCOrderMessage(nlohmann::json& jMessage);
+  bool handleCancelOrderMessage(nlohmann::json& jMessage);
 };
 
 #endif //CANCELORDERMESSAGEHANDLER_H
