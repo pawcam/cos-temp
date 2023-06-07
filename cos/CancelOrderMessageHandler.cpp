@@ -48,12 +48,14 @@ bool CancelOrderMessageHandler::handleCancelOrderMessage(nlohmann::json& jMessag
       SX_DEBUG("%s Sent cancel request: "
                "GON:%u "
                "Identifier:%u "
-               "with sx message type %d"
+               "with sx message type %d "
+               "and szExchangeSymbol %s"
                "\n"
                , (bSent) ? "Successfully" : "Unsuccessfully"
                , szMsg.u.cwd.nGlobalOrderNum
                , szMsg.u.cwd.nowa.nIdentifier
                , szMsg.h.uchType
+               , szMsg.u.cwd.nowa.no.szExchangeSymbol
               );
       return bSent;
     }
