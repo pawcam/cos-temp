@@ -14,6 +14,8 @@
 #include <twLib/models/FutureOption.h>
 #include "CancelOrderMessageHandler.h"
 
+#include <kr/static_assertions.h>
+
 using namespace std;
 using namespace boost;
 using namespace TW;

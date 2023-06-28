@@ -25,7 +25,7 @@ bool CancelOrderMessageHandler::handleMessage(nlohmann::json& jMessage, std::str
 
 //----------------------------------
 //----------------------------------
-bool CancelOrderMessageHandler::handleCancelOrderMessage(nlohmann::json& jMessage)
+bool CancelOrderMessageHandler::handleCancelOrderMessage(const nlohmann::json& jMessage)
 {
   SX_DEBUG("Attempting to handle a cancel message for order %s\n", jMessage.dump());
 

@@ -20,7 +20,7 @@ private:
   TW::SenderLocationReader *m_pSenderLocationReader;
   bool m_bDefaultRoute;
   MismatchedRootsMap m_rootMap;
-  bool handleCancelOrderMessage(nlohmann::json& jMessage);
+  bool handleCancelOrderMessage(const nlohmann::json& jMessage);
 };
 
 #endif //CANCELORDERMESSAGEHANDLER_H
